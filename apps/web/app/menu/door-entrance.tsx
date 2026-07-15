@@ -4,9 +4,13 @@ import {useEffect,useState} from 'react';
 
 export function DoorEntrance(){
  const[opening,setOpening]=useState(false);
- const[visible,setVisible]=useState(true);
+ const[visible,setVisible]=useState(false);
  useEffect(()=>{
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const alreadySeen=sessionStorage.getItem('k2nobeit-entrance-seen')==='true';
+  if(reduced||alreadySeen)return;
+  setVisible(true);
+  sessionStorage.setItem('k2nobeit-entrance-seen','true');
   const openTimer=setTimeout(()=>setOpening(true),reduced?120:650);
   const hideTimer=setTimeout(()=>setVisible(false),reduced?450:2300);
   return()=>{clearTimeout(openTimer);clearTimeout(hideTimer)};

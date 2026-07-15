@@ -202,7 +202,7 @@ html{scroll-padding-top:72px}.window-menu{padding-bottom:env(safe-area-inset-bot
 /* Decorative chair, treated as a die-cut sticker beside the menu story. */
 .kitchen-window{overflow:visible!important}.chair-sticker{position:absolute;z-index:14;top:70%;right:auto;left:-9%;width:clamp(108px,14%,170px);pointer-events:none;filter:drop-shadow(-6px 10px 8px rgb(var(--shadow)/.24));transform:rotate(-10deg);transform-origin:50% 85%;animation:chair-sticker-in .7s cubic-bezier(.2,.9,.25,1.18) both}.chair-sticker img{display:block;width:100%;height:auto}.chair-sticker:after{content:"";position:absolute;z-index:-1;left:18%;bottom:-6%;width:48%;height:12%;border-radius:50%;background:rgb(var(--shadow)/.16);filter:blur(8px);transform:rotate(8deg)}@keyframes chair-sticker-in{from{opacity:0;transform:translate(-16px,18px) rotate(-16deg) scale(.88)}to{opacity:1;transform:rotate(-10deg) scale(1)}}
 @media(max-width:1200px){.chair-sticker{left:-3.5%;width:13%;min-width:92px}}
-@media(max-width:700px){.chair-sticker{top:72%;right:auto;left:-4%;width:18%;min-width:70px;filter:drop-shadow(-4px 6px 5px rgb(var(--shadow)/.2));transform:rotate(-11deg)}}
+@media(max-width:700px){.chair-sticker{top:76%;right:auto;left:-4%;width:18%;min-width:70px;filter:drop-shadow(-4px 6px 5px rgb(var(--shadow)/.2));transform:rotate(-11deg)}}
 @media(max-width:430px){.chair-sticker{left:-3%;width:19%;min-width:62px}}
 @media(prefers-reduced-motion:reduce){.chair-sticker{animation:none}}
 
@@ -330,4 +330,134 @@ html{scroll-padding-top:72px}.window-menu{padding-bottom:env(safe-area-inset-bot
 }
 @media(max-width:700px){
   .kitchen-interior-dim{left:25.5%;top:15.2%;width:49%;height:49.5%}
+}
+
+/* Motion performance: keep the rich scene responsive on touch and modest GPUs. */
+.tray-stage,.category-tray,.shutter-motion,.dish-dialog{
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+}
+.kitchen-window-retreat .tray-stage,
+.kitchen-window-enter .tray-stage,
+.kitchen-window-ready .tray-stage{
+  will-change:transform,opacity;
+}
+.window-item-card{
+  contain:layout paint style;
+}
+.dish-overlay{
+  overscroll-behavior:contain;
+}
+
+@media(hover:none),(pointer:coarse){
+  .window-item-card:hover,
+  .window-item-card:nth-child(2n):hover,
+  .window-categories button:hover{
+    transform:none!important;
+  }
+}
+
+@media(max-width:700px){
+  .window-categories,.dish-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .ambient-grain{display:none}
+  .restaurant-backdrop:after,.restaurant-curtain,.vine-side,.vine-sprig{animation:none!important}
+  .restaurant-curtain,.hanging-plants{filter:none!important}
+  .ice-cubes i:nth-child(n+4),.steam i:nth-child(3){display:none}
+  .category-tray{filter:drop-shadow(0 12px 8px rgba(35,16,7,.32))!important}
+  .tray-shadow{filter:blur(8px)!important}
+  .dish-dialog{box-shadow:0 -14px 38px #0005!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important}
+  .coded-entrance,.ambient-grain,.ice-cubes,.steam,.curtain-sway{display:none!important}
+  .category-tray{transform:scale(1.04)!important}
+}
+
+/* Final mobile layout pass: one clean rhythm and no decorative collisions. */
+@media(max-width:700px){
+  .window-menu{overflow-x:clip}
+  .restaurant-hero{
+    width:calc(100% - 1.25rem)!important;
+    margin:.75rem auto 0!important;
+    padding:.9rem 1rem!important;
+  }
+  .brand-lockup{min-width:0}
+  .brand-logo{flex:0 0 auto}
+  .brand-caption{min-width:0}
+  .brand-caption p{overflow:hidden;text-overflow:ellipsis}
+  .window-categories{
+    width:100%!important;
+    margin:.7rem 0 0!important;
+    padding:.55rem .7rem!important;
+    scroll-padding-inline:.7rem;
+  }
+  .window-categories button{scroll-snap-align:start}
+  .house-manifesto{margin-bottom:.35rem}
+  .plant-interaction,.hanging-plants{display:none!important}
+  .kitchen-window{
+    width:calc(100% - 1rem)!important;
+    margin:1.45rem auto 0!important;
+    border-radius:10px!important;
+  }
+  .chair-sticker{
+    top:77%!important;
+    left:2%!important;
+    width:17%!important;
+    min-width:62px!important;
+    max-width:82px!important;
+  }
+  .window-story-label{bottom:-10px!important;white-space:nowrap}
+  .menu-scroll-cue{margin-top:.9rem!important}
+  .selected-menu{
+    width:100%!important;
+    margin-top:0!important;
+    padding:3.2rem .8rem 4rem!important;
+    overflow:visible!important;
+  }
+  .menu-editorial-mark{top:1.15rem!important;left:.9rem!important}
+  .selected-menu-heading{
+    display:grid!important;
+    width:100%!important;
+    gap:.9rem!important;
+    margin:0 0 1rem!important;
+    padding:0 0 1.15rem!important;
+  }
+  .selected-menu-heading>div{
+    grid-template-columns:minmax(0,1fr) auto!important;
+    width:100%;
+    gap:.35rem .65rem;
+  }
+  .selected-menu-heading h2{
+    min-width:0;
+    margin:0!important;
+    font-size:clamp(2rem,10.5vw,2.7rem)!important;
+    line-height:1.08!important;
+    overflow-wrap:anywhere;
+  }
+  .menu-count{align-self:center;justify-self:end!important;white-space:nowrap}
+  .selected-menu-heading label,.selected-menu-heading input{width:100%!important}
+  .selected-menu-heading input{height:52px;padding-inline:3rem 1rem!important}
+  .window-items{gap:.8rem!important}
+  .window-item-card{
+    width:100%;
+    min-width:0;
+    min-height:132px!important;
+    padding:1rem!important;
+    gap:.65rem!important;
+  }
+  .dish-card-copy{min-width:0}
+  .dish-card-copy h3,.dish-card-copy p{overflow-wrap:anywhere}
+  .dish-card-image{flex-basis:96px!important;min-width:96px;min-height:132px!important}
+  .card-action{flex:0 0 30px!important}
+  .window-top{left:.75rem;bottom:calc(.75rem + env(safe-area-inset-bottom));width:44px;height:44px}
+  .footer-main,.footer-bottom{width:calc(100% - 2rem)!important}
+}
+
+@media(max-width:390px){
+  .chair-sticker{top:79%!important;min-width:56px!important}
+  .selected-menu{padding-inline:.65rem!important}
+  .selected-menu-heading h2{font-size:clamp(1.8rem,10vw,2.25rem)!important}
+  .dish-card-image{flex-basis:84px!important;min-width:84px}
 }

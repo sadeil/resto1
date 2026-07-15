@@ -43,6 +43,89 @@ apps/api   Express, Prisma, JWT-cookie authentication, Cloudinary integration
 - `docker compose up --build` — الحاويات محلياً.
 - `npx prisma migrate deploy -w apps/api` — تطبيق ترحيلات الإنتاج قبل بدء API.
 
+## النشر المجاني: Cloudflare Workers + Render + Neon + Cloudinary
+
+هذه البنية تبقي Next.js App Router وSSR وReact Server Components ولوحة الإدارة وAPI وقاعدة البيانات فعّالة. لا تستخدم Cloudflare Pages أو static export. جميع أوامر npm التالية تُشغّل من جذر المستودع حتى يستخدم الـmonorepo ملف `package-lock.json` الواحد.
+
+### 1. Neon PostgreSQL
+
+1. أنشئ مشروعًا مجانيًا وقاعدة بيانات في [Neon](https://console.neon.tech/).
+2. من **Connect** انسخ رابط الاتصال pooled إلى `DATABASE_URL`، وانسخ الرابط direct/non-pooled إلى `DIRECT_URL`. أبقِ `sslmode=require` في الرابطين.
+3. لا تضع أي رابط اتصال في GitHub أو في ملفات `.env` المتتبعة.
+
+يستخدم Prisma الرابط pooled لتشغيل التطبيق، ويستخدم `directUrl` للترحيلات التي تحتاج اتصالًا مباشرًا.
+
+### 2. Cloudinary
+
+1. أنشئ حسابًا مجانيًا في [Cloudinary](https://cloudinary.com/).
+2. من API Keys انسخ `CLOUDINARY_CLOUD_NAME` و`CLOUDINARY_API_KEY` و`CLOUDINARY_API_SECRET`.
+3. ضع القيم في Render فقط. القيمة `CLOUDINARY_API_SECRET` سر ولا يجوز إضافتها إلى GitHub أو إلى متغيرات الواجهة.
+
+### 3. Render API
+
+1. في [Render](https://dashboard.render.com/) اختر **New > Blueprint** واربط GitHub repository `sadeil/resto1`.
+2. اختر ملف `render.yaml`. سينشئ خدمة Web Service باسم `k2nobeit-api` من جذر المستودع مع auto-deploy وhealth check على `/api/health`.
+3. تأكد أن الخطة **Free**، ثم أدخل القيم السرية المطلوبة في Render:
+
+   - `DATABASE_URL`: رابط Neon pooled.
+   - `DIRECT_URL`: رابط Neon direct.
+   - `JWT_SECRET`: قيمة عشوائية قوية بطول 64 حرفًا على الأقل. يمكن توليد واحدة محليًا بـ `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`.
+   - `NODE_ENV`: `production`.
+   - `WEB_ORIGIN`: رابط Cloudflare النهائي كاملًا ومن دون `/` في النهاية، مثل `https://k2nobeit.<account-subdomain>.workers.dev`.
+   - `SEED_ADMIN_EMAIL`: بريد مدير المطعم.
+   - `SEED_ADMIN_PASSWORD`: كلمة أولية قوية بطول 12 حرفًا على الأقل.
+   - `CLOUDINARY_CLOUD_NAME`.
+   - `CLOUDINARY_API_KEY`.
+   - `CLOUDINARY_API_SECRET`.
+
+أمر البناء المضبوط في `render.yaml` هو:
+
+```bash
+npm ci && npm run db:generate -w apps/api && npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma && npm run db:seed -w apps/api && npm run build -w apps/api
+```
+
+وأمر البدء هو `npm run start -w apps/api`. بعد النشر، تحقق من `https://k2nobeit-api.onrender.com/api/health`. عملية seed قابلة لإعادة التشغيل، وتنشئ المدير فقط إن لم يكن موجودًا؛ الحقل `update` فارغ لذلك لا تستبدل كلمة مرور مدير موجود.
+
+### 4. Cloudflare Workers frontend
+
+1. في Cloudflare افتح **Workers & Pages > Create > Import a repository**، واختر `sadeil/resto1`. أنشئ **Worker** وليس Pages static site.
+2. اترك جذر المستودع هو `/` حتى يعمل `npm ci` من الجذر ويكتشف npm workspaces.
+3. عيّن أمر التثبيت إلى `npm ci` وأمر النشر إلى:
+
+   ```bash
+   npm run deploy -w apps/web
+   ```
+
+4. أضف Build Variables التالية قبل أول build:
+
+   - `NEXT_PUBLIC_API_URL=https://k2nobeit-api.onrender.com/api`
+   - `NEXT_PUBLIC_SITE_URL=https://k2nobeit.<account-subdomain>.workers.dev`
+
+5. اسم Worker في `apps/web/wrangler.jsonc` هو `k2nobeit`. بعد معرفة رابط `workers.dev` الحقيقي، استبدل `<account-subdomain>` في `NEXT_PUBLIC_SITE_URL`، وضع الأصل نفسه تمامًا في `WEB_ORIGIN` على Render، ثم أعد نشر الخدمتين.
+6. ربط GitHub في Cloudflare و`autoDeploy: true` في Render يجعلان كل push إلى فرع الإنتاج يعيد نشر الخدمتين تلقائيًا.
+
+للمعاينة محليًا في runtime قريب من Cloudflare:
+
+```bash
+npm run preview -w apps/web
+```
+
+وللنشر اليدوي بعد تسجيل الدخول بـWrangler:
+
+```bash
+npm run deploy -w apps/web
+```
+
+### 5. فحص ما بعد النشر
+
+1. افتح `/api/health` ثم `/menu`. تظهر حالة تحميل عربية وتعيد الواجهة محاولة طلب المنيو أثناء استيقاظ Render Free؛ API يرسل cache عامًا قصيرًا للمنيو فقط.
+2. افتح `/admin/login` وسجّل الدخول، ثم اختبر الإضافة والتعديل والأرشفة والاستعادة والنشر.
+3. اختبر رفع JPG/PNG/WebP وتأكد من ظهور الصورة في Cloudinary والمنيو المنشور.
+4. من أدوات المتصفح تأكد أن كوكي `session` تحمل `HttpOnly`, `Secure`, `SameSite=None`, و`Path=/`. في التطوير تستخدم `SameSite=Lax` ولا تستخدم Secure على HTTP المحلي.
+5. تأكد أن ردود `/api/admin/*` و`/api/auth/*` تحمل `Cache-Control: private, no-store`، وأن CORS يعيد أصل `WEB_ORIGIN` المحدد مع credentials ولا يعيد `*`.
+
+ملاحظة متعلقة بالكوكيز: `workers.dev` و`onrender.com` نطاقان مختلفان، ولذلك تعتبر بعض المتصفحات كوكي Render طرفًا ثالثًا. الإعداد الحالي هو الإعداد الصحيح للطلب عبر النطاقات، لكن المتصفح أو سياسة المستخدم قد تحظر third-party cookies بالكامل. للحصول على مصادقة موثوقة في كل المتصفحات استخدم لاحقًا نطاقًا مخصصًا مشتركًا (مثل `menu.example.com` و`api.example.com`) أو proxy للـAPI تحت أصل الواجهة نفسه.
+
 عند النشر، استخدم HTTPS، عيّن `NODE_ENV=production`، خزّن الأسرار في مدير أسرار المنصة، وشغّل PostgreSQL مُداراً ونسخاً احتياطية. افصل عنوان API العام عن عنوانه داخل Docker عند الحاجة.
 
 ## API المختصر

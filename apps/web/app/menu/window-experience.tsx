@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import {
@@ -117,12 +117,17 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     queryKey: ["menu"],
     queryFn: () => api<MenuData>("/menu"),
     initialData: initial || undefined,
+    retry: 4,
+    retryDelay: (attempt) => Math.min(2_000 * (attempt + 1), 6_000),
   });
   const data = query.data;
   const [first] = data?.categories || [];
   const [selectedId, setSelectedId] = useState(first?.id || "");
   const [shownId, setShownId] = useState(first?.id || "");
   const [phase, setPhase] = useState<"ready" | "retreat" | "enter">("ready");
+  const transitionTimer = useRef<number | null>(null);
+  const transitionFrame = useRef<number | null>(null);
+  const pointerFrame = useRef<number | null>(null);
   const [q, setQ] = useState("");
   const [modal, setModal] = useState<Item | null>(null);
   const selected = data?.categories.find((c) => c.id === selectedId) || first;
@@ -161,17 +166,22 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
       (a, b) => a.subcategory.sortOrder - b.subcategory.sortOrder,
     );
   }, [isColdDrinks, items]);
+  useEffect(() => () => {
+    if (transitionTimer.current !== null) window.clearTimeout(transitionTimer.current);
+    if (transitionFrame.current !== null) window.cancelAnimationFrame(transitionFrame.current);
+    if (pointerFrame.current !== null) window.cancelAnimationFrame(pointerFrame.current);
+  }, []);
   function choose(id: string, sound = false) {
     if (id === selectedId || phase !== "ready") return;
     if (sound) woodSound();
     setPhase("retreat");
-    setTimeout(() => {
+    transitionTimer.current = window.setTimeout(() => {
       setShownId(id);
       setSelectedId(id);
       setPhase("enter");
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => setPhase("ready")),
-      );
+      transitionFrame.current = window.requestAnimationFrame(() => {
+        transitionFrame.current = window.requestAnimationFrame(() => setPhase("ready"));
+      });
     }, 390);
   }
   function moveWindow(event: React.PointerEvent<HTMLElement>) {
@@ -179,16 +189,15 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = (event.clientX - bounds.left) / bounds.width - 0.5;
     const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    event.currentTarget.style.setProperty("--window-x", x.toFixed(3));
-    event.currentTarget.style.setProperty("--window-y", y.toFixed(3));
-    event.currentTarget.style.setProperty(
-      "--light-x",
-      `${(50 + x * 18).toFixed(1)}%`,
-    );
-    event.currentTarget.style.setProperty(
-      "--light-y",
-      `${(55 + y * 12).toFixed(1)}%`,
-    );
+    const target = event.currentTarget;
+    if (pointerFrame.current !== null) window.cancelAnimationFrame(pointerFrame.current);
+    pointerFrame.current = window.requestAnimationFrame(() => {
+      target.style.setProperty("--window-x", x.toFixed(3));
+      target.style.setProperty("--window-y", y.toFixed(3));
+      target.style.setProperty("--light-x", `${(50 + x * 18).toFixed(1)}%`);
+      target.style.setProperty("--light-y", `${(55 + y * 12).toFixed(1)}%`);
+      pointerFrame.current = null;
+    });
   }
   function resetWindow(event: React.PointerEvent<HTMLElement>) {
     event.currentTarget.style.setProperty("--window-x", "0");
@@ -650,7 +659,7 @@ function State({ loading, retry }: { loading: boolean; retry: () => void }) {
   return (
     <div className="window-empty min-h-screen">
       <UtensilsCrossed />
-      <p>{loading ? "بنجهّز شباك الدار…" : "تعذّر تحميل المنيو"}</p>
+      <p>{loading ? "بنجهّز شباك الدار… قد يستغرق تشغيل الخدمة لحظات" : "تعذّر تحميل المنيو"}</p>
       {!loading && <button onClick={retry}>حاول مرة ثانية</button>}
     </div>
   );
