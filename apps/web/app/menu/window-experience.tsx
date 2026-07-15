@@ -323,6 +323,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
             src="/images/window-menu/window-cartoon-transparent-v3.png"
             alt="شباك مطبخ بيت فلسطيني تقليدي"
           />
+          <div className="kitchen-interior-dim" aria-hidden="true" />
           <div className="window-story-label" aria-hidden="true">
             <Sparkles size={13} />
             <span>اختار، واحنا منجهّزها</span>
@@ -335,7 +336,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
             <div className="tray-stage">
               {isShownHotDrinks && (
                 <div className="steam" aria-hidden="true">
-                  <i /><i /><i />
+                  <i /><i /><i /><i /><i />
                 </div>
               )}
               {isShownColdDrinks && (
