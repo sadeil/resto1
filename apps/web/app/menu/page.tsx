@@ -1,0 +1,1 @@
+import {WindowMenu} from './window-experience';import {API} from '@/lib/api';export const revalidate=60;async function getMenu(){try{const r=await fetch(`${API}/menu`,{next:{revalidate:60}});if(!r.ok)throw new Error();return (await r.json()).data}catch{return null}}export default async function Menu(){return <WindowMenu initial={await getMenu()}/>}

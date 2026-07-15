@@ -1,0 +1,1 @@
+ALTER TABLE "AddOn" ADD COLUMN "nameEn" TEXT;

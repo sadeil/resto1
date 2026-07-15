@@ -1,0 +1,1 @@
+import app,{prisma} from './app.js'; import {env} from './config.js'; const server=app.listen(env.PORT,()=>console.log(`API running on ${env.PORT}`)); const stop=async()=>{server.close();await prisma.$disconnect();}; process.on('SIGTERM',stop);process.on('SIGINT',stop);

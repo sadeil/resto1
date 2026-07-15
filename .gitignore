@@ -1,0 +1,14 @@
+node_modules
+.next
+dist
+.env
+coverage
+playwright-report
+test-results
+.dev-*.log
+.web-*.log
+tmp
+.ui-mobile-profile-*
+.window-resized-profile
+*.tsbuildinfo
+apps/api/prisma/dev.db
