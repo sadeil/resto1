@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function DoorEntrance() {
+export function DoorEntrance({ ready = true }: { ready?: boolean }) {
   const [opening, setOpening] = useState(false);
   const [visible, setVisible] = useState(true);
   const openTimer = useRef<number | null>(null);
@@ -21,7 +21,7 @@ export function DoorEntrance() {
   };
 
   const openDoor = () => {
-    if (opening) return;
+    if (opening || !ready) return;
     setOpening(true);
     if (openTimer.current !== null) window.clearTimeout(openTimer.current);
     if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
@@ -29,14 +29,20 @@ export function DoorEntrance() {
   };
 
   useEffect(() => {
+    if (!ready) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     openTimer.current = window.setTimeout(() => setOpening(true), reducedMotion ? 120 : 350);
     hideTimer.current = window.setTimeout(finishEntrance, reducedMotion ? 650 : 1_850);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     return () => {
       if (openTimer.current !== null) window.clearTimeout(openTimer.current);
       if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
+    };
+  }, [ready]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
       document.body.style.overflow = previousOverflow;
     };
   }, []);

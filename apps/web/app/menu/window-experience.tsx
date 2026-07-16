@@ -228,7 +228,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     event.currentTarget.style.setProperty("--light-y", "55%");
   }
   if (!data)
-    return <><DoorEntrance /><State loading={query.isFetching} retry={() => query.refetch()} /></>;
+    return <><DoorEntrance ready={false} /><State loading={query.isFetching} retry={() => query.refetch()} /></>;
   const tray = trays[clean(shown?.name || "")];
   const renderItemCard = (item: Item) => (
     <button
@@ -272,7 +272,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   );
   return (
     <>
-      <DoorEntrance />
+      <DoorEntrance ready />
       {featuredItem && promoPhase !== "hidden" && (
         <FeaturedToday
           item={featuredItem}
