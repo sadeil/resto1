@@ -126,6 +126,8 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   const [shownId, setShownId] = useState(first?.id || "");
   const [phase, setPhase] = useState<"ready" | "retreat" | "enter">("ready");
   const transitionTimer = useRef<number | null>(null);
+  const transitionUnlockTimer = useRef<number | null>(null);
+  const transitionLocked = useRef(false);
   const transitionFrame = useRef<number | null>(null);
   const pointerFrame = useRef<number | null>(null);
   const [q, setQ] = useState("");
@@ -146,7 +148,6 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   );
   const isWinterDrinks = clean(selected?.name || "") === "المشروبات الساخنة";
   const isColdDrinks = clean(selected?.name || "") === "المشروبات الباردة";
-  const isShownHotDrinks = clean(shown?.name || "") === "المشروبات الساخنة";
   const isShownColdDrinks = clean(shown?.name || "") === "المشروبات الباردة";
   const isArgeeleh = clean(selected?.name || "") === "الأراجيل";
   const categoryAddOns =
@@ -173,6 +174,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   }, [isColdDrinks, items]);
   useEffect(() => () => {
     if (transitionTimer.current !== null) window.clearTimeout(transitionTimer.current);
+    if (transitionUnlockTimer.current !== null) window.clearTimeout(transitionUnlockTimer.current);
     if (transitionFrame.current !== null) window.cancelAnimationFrame(transitionFrame.current);
     if (pointerFrame.current !== null) window.cancelAnimationFrame(pointerFrame.current);
   }, []);
@@ -188,7 +190,8 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     };
   }, [featuredItem]);
   function choose(id: string, sound = false) {
-    if (id === selectedId || phase !== "ready") return;
+    if (id === selectedId || phase !== "ready" || transitionLocked.current) return;
+    transitionLocked.current = true;
     if (sound) woodSound();
     setPhase("retreat");
     transitionTimer.current = window.setTimeout(() => {
@@ -198,6 +201,9 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
       transitionFrame.current = window.requestAnimationFrame(() => {
         transitionFrame.current = window.requestAnimationFrame(() => setPhase("ready"));
       });
+      transitionUnlockTimer.current = window.setTimeout(() => {
+        transitionLocked.current = false;
+      }, 900);
     }, 390);
   }
   function moveWindow(event: React.PointerEvent<HTMLElement>) {
@@ -368,11 +374,9 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           <div className="shutter-motion shutter-motion-left" />
           {tray && (
             <div className="tray-stage">
-              {isShownHotDrinks && (
-                <div className="steam" aria-hidden="true">
-                  <i /><i /><i /><i /><i />
-                </div>
-              )}
+              <div className="steam" aria-hidden="true">
+                <i /><i /><i /><i /><i />
+              </div>
               {isShownColdDrinks && (
                 <div className="ice-cubes" aria-hidden="true">
                   <i /><i /><i /><i /><i />

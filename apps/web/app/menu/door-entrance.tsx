@@ -8,18 +8,30 @@ export function DoorEntrance() {
   const openTimer = useRef<number | null>(null);
   const hideTimer = useRef<number | null>(null);
 
+  const finishEntrance = () => {
+    setVisible(false);
+    window.requestAnimationFrame(() => {
+      document.getElementById("selected-menu")?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "start",
+      });
+    });
+  };
+
   const openDoor = () => {
     if (opening) return;
     setOpening(true);
     if (openTimer.current !== null) window.clearTimeout(openTimer.current);
     if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
-    hideTimer.current = window.setTimeout(() => setVisible(false), 1_600);
+    hideTimer.current = window.setTimeout(finishEntrance, 1_600);
   };
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     openTimer.current = window.setTimeout(() => setOpening(true), reducedMotion ? 120 : 350);
-    hideTimer.current = window.setTimeout(() => setVisible(false), reducedMotion ? 650 : 1_850);
+    hideTimer.current = window.setTimeout(finishEntrance, reducedMotion ? 650 : 1_850);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
