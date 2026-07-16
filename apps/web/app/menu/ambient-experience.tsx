@@ -143,7 +143,7 @@ function PlantInteraction({
   return (
     <aside
       className={`plant-interaction plant-${state}`}
-      aria-label="نبتة الدار"
+      aria-label="نبتة البيت"
     >
       <WaterPlantPrompt
         visible={state === "inviting" || state === "idle"}

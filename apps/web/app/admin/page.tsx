@@ -49,7 +49,7 @@ export default function Admin() {
     <main className="min-h-screen bg-cream">
       <header className="border-b border-beige bg-paper">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 p-5">
-          <div><p dir="ltr" className="font-bold text-olive">k2nobeit</p><h1 className="text-2xl font-extrabold">إدارة قائمة الدار</h1></div>
+          <div><p dir="ltr" className="font-bold text-olive">k2nobeit</p><h1 className="text-2xl font-extrabold">إدارة قائمة البيت</h1></div>
           <div className="flex flex-wrap gap-2">
             <a href="/menu" target="_blank" className="btn border border-beige"><ExternalLink size={18} />معاينة</a>
             <button className="btn btn-primary" onClick={() => publish.mutate()}><Send size={18} />نشر القائمة</button>

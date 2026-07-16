@@ -172,10 +172,10 @@ model RestaurantSettings {
   id            Int              @id @default(1)
   name          String           @default("كأنه بيت")
   nameEn        String           @default("k2nobeit")
-  description   String           @default("أكل بيتي فلسطيني، معمول بمحبة")
+  description   String           @default("كلشي معمول بمحبة")
   currency      String           @default("₪")
   status        RestaurantStatus @default(OPEN)
-  closedMessage String           @default("الدار مسكّرة هالوقت… بنستناكم بموعدنا الجاي.")
+  closedMessage String           @default("البيت مسكّر هالوقت… بنستناكم بموعدنا الجاي.")
   primaryColor  String           @default("#66704A")
   logoUrl       String?
   phone         String?

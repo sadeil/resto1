@@ -93,7 +93,7 @@ export function MenuClient({ initial }: { initial: Menu | null }) {
   if (!data)
     return (
       <State
-        text={isFetching ? "بنجهّز سفرة الدار…" : "ما قدرنا نوصل للقائمة"}
+        text={isFetching ? "بنجهّز سفرة البيت…" : "ما قدرنا نوصل للقائمة"}
         action={error ? () => refetch() : undefined}
       />
     );

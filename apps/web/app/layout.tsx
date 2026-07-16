@@ -8,14 +8,14 @@ const font = Tajawal({
 });
 export const metadata: Metadata = {
   title: { default: "كأنه بيت | أكل بيتي فلسطيني", template: "%s | كأنه بيت" },
-  description: "أكل بيتي فلسطيني، معمول بمحبة ومن مكونات طازجة.",
+  description: "كلشي معمول بمحبة",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   ),
   alternates: { canonical: "/menu" },
   openGraph: {
     title: "كأنه بيت",
-    description: "أكل بيتي فلسطيني، معمول بمحبة",
+    description: "كلشي معمول بمحبة",
     locale: "ar_PS",
     type: "website",
   },

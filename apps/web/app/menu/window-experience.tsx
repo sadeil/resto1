@@ -296,13 +296,13 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
             <div className="brand-caption">
               <span dir="ltr">{data.settings.nameEn}</span>
               <h1 className="sr-only">{data.settings.name}</h1>
-              <p>{data.settings.description}</p>
+              <p>كلشي معمول بمحبة</p>
               <div className="hero-signals">
                 <span className="hero-open-state">
                   <i aria-hidden="true" />
                   {data.settings.status === "OPEN" ? "مفتوح الآن" : "مغلق الآن"}
                 </span>
-                <span className="hero-house-note"><Leaf size={14} /> من مطبخ الدار</span>
+                <span className="hero-house-note"><Leaf size={14} /> من مطبخ البيت</span>
               </div>
             </div>
           </div>
@@ -396,10 +396,10 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           <div className="chair-sticker" aria-hidden="true">
             <img src="/images/decor/patterned-chair-sticker.webp" alt="" />
           </div>
-          <span className="menu-editorial-mark" aria-hidden="true">MENU · منيو الدار</span>
+          <span className="menu-editorial-mark" aria-hidden="true">MENU · منيو البيت</span>
           <div className="selected-menu-heading">
             <div>
-              <small>من شباك الدار</small>
+              <small>من شباك البيت</small>
               <h2 key={selectedId}>{clean(selected?.name || "")}</h2>
               {selected?.description && (
                 <em className="category-english" dir="ltr">
@@ -504,14 +504,14 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
                 <strong>{data.settings.name}</strong>
                 <small dir="ltr">{data.settings.nameEn}</small>
               </div>
-              <p>{data.settings.description}</p>
+              <p>كلشي معمول بمحبة</p>
               <div className="footer-socials">
                 <a href="https://instagram.com/k2nobeit" target="_blank" rel="noreferrer" aria-label="إنستغرام"><Instagram /></a>
                 <a href="https://facebook.com/k2nobeit" target="_blank" rel="noreferrer" aria-label="فيسبوك"><Facebook /></a>
               </div>
             </div>
             <nav className="footer-column" aria-label="روابط المنيو">
-              <h2>منيو الدار</h2>
+              <h2>منيو البيت</h2>
               {data.categories.slice(0, 6).map((category) => (
                 <button key={category.id} onClick={() => { choose(category.id, true); document.getElementById("selected-menu")?.scrollIntoView({ behavior: "smooth" }); }}>
                   {clean(category.name)}
@@ -579,7 +579,7 @@ function FeaturedToday({
         <X />
       </button>
       <div className="featured-copy">
-        <span className="featured-kicker"><Sparkles size={18} /> اختيار الدار</span>
+        <span className="featured-kicker"><Sparkles size={18} /> اختيار البيت</span>
         <p className="featured-eyebrow">الصنف المميز اليوم</p>
         <h2 id="featured-today-title">{item.name}</h2>
         {item.description && <p className="featured-description">{item.description}</p>}
@@ -736,7 +736,7 @@ function State({ loading, retry }: { loading: boolean; retry: () => void }) {
   return (
     <div className="window-empty min-h-screen">
       <UtensilsCrossed />
-      <p>{loading ? "بنجهّز شباك الدار… قد يستغرق تشغيل الخدمة لحظات" : "تعذّر تحميل المنيو"}</p>
+      <p>{loading ? "بنجهّز شباك البيت… قد يستغرق تشغيل الخدمة لحظات" : "تعذّر تحميل المنيو"}</p>
       {!loading && <button onClick={retry}>حاول مرة ثانية</button>}
     </div>
   );

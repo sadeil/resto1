@@ -109,8 +109,8 @@ async function main(){
  await db.user.upsert({where:{email},update:{},create:{email,passwordHash:await bcrypt.hash(password,12)}});
  await db.restaurantSettings.upsert({where:{id:1},update:{},create:{id:1}});
  await db.category.updateMany({where:{name:'المشروبات'},data:{name:'المشروبات الساخنة'}});
- await db.menuItem.deleteMany({where:{OR:[{id:{startsWith:'seed-'}},{name:{in:['حمص بالطحينة','متبل باذنجان','مسخّن رول','مقلوبة الدار','قدرة خليلية','كنافة بيتية','مهلبية ماء الزهر']}}]}});
- await db.category.deleteMany({where:{name:{in:['مقبلات','أطباق الدار','حلويات']},items:{none:{}}}});
+ await db.menuItem.deleteMany({where:{OR:[{id:{startsWith:'seed-'}},{name:{in:['حمص بالطحينة','متبل باذنجان','مسخّن رول','مقلوبة البيت','قدرة خليلية','كنافة بيتية','مهلبية ماء الزهر']}}]}});
+ await db.category.deleteMany({where:{name:{in:['مقبلات','أطباق البيت','حلويات']},items:{none:{}}}});
  for(const[i,name]of categories.entries()){
   await db.category.upsert({where:{name},update:{sortOrder:i},create:{name,sortOrder:i,published:true}});
  }
