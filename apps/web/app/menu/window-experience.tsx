@@ -130,6 +130,11 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   const pointerFrame = useRef<number | null>(null);
   const [q, setQ] = useState("");
   const [modal, setModal] = useState<Item | null>(null);
+  const [promoPhase, setPromoPhase] = useState<"hidden" | "showing" | "leaving">("hidden");
+  const featuredItem = useMemo(
+    () => data?.categories.flatMap((category) => category.items).find((item) => item.featured) || null,
+    [data],
+  );
   const selected = data?.categories.find((c) => c.id === selectedId) || first;
   const shown = data?.categories.find((c) => c.id === shownId) || first;
   const items = useMemo(
@@ -171,6 +176,17 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     if (transitionFrame.current !== null) window.cancelAnimationFrame(transitionFrame.current);
     if (pointerFrame.current !== null) window.cancelAnimationFrame(pointerFrame.current);
   }, []);
+  useEffect(() => {
+    if (!featuredItem) return;
+    const showTimer = window.setTimeout(() => setPromoPhase("showing"), 15_000);
+    const leaveTimer = window.setTimeout(() => setPromoPhase("leaving"), 24_400);
+    const hideTimer = window.setTimeout(() => setPromoPhase("hidden"), 25_000);
+    return () => {
+      window.clearTimeout(showTimer);
+      window.clearTimeout(leaveTimer);
+      window.clearTimeout(hideTimer);
+    };
+  }, [featuredItem]);
   function choose(id: string, sound = false) {
     if (id === selectedId || phase !== "ready") return;
     if (sound) woodSound();
@@ -251,6 +267,18 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   return (
     <>
       <DoorEntrance />
+      {featuredItem && promoPhase !== "hidden" && (
+        <FeaturedToday
+          item={featuredItem}
+          currency={data.settings.currency}
+          leaving={promoPhase === "leaving"}
+          close={() => setPromoPhase("hidden")}
+          details={() => {
+            setPromoPhase("hidden");
+            setModal(featuredItem);
+          }}
+        />
+      )}
       <main
         style={{ "--brand": data.settings.primaryColor } as React.CSSProperties}
         className="window-menu"
@@ -318,9 +346,6 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           onPointerMove={moveWindow}
           onPointerLeave={resetWindow}
         >
-          <div className="chair-sticker" aria-hidden="true">
-            <img src="/images/decor/patterned-chair-sticker.png" alt="" />
-          </div>
           <aside className="window-side-note window-side-note-right" aria-hidden="true">
             <small>من هون الحكاية</small><strong>اختار صينيّتك</strong><i />
           </aside>
@@ -368,6 +393,9 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           <ChevronDown size={17} />
         </a>
         <section className="selected-menu" id="selected-menu">
+          <div className="chair-sticker" aria-hidden="true">
+            <img src="/images/decor/patterned-chair-sticker.png" alt="" />
+          </div>
           <span className="menu-editorial-mark" aria-hidden="true">MENU · منيو الدار</span>
           <div className="selected-menu-heading">
             <div>
@@ -518,6 +546,55 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
         )}
       </main>
     </>
+  );
+}
+function FeaturedToday({
+  item,
+  currency,
+  leaving,
+  close,
+  details,
+}: {
+  item: Item;
+  currency: string;
+  leaving: boolean;
+  close: () => void;
+  details: () => void;
+}) {
+  const price = item.variants[0]?.price || item.price;
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => event.key === "Escape" && close();
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [close]);
+  return (
+    <aside
+      className={`featured-today ${leaving ? "featured-today-leaving" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="featured-today-title"
+    >
+      <div className="featured-glow" aria-hidden="true" />
+      <button className="featured-close" onClick={close} aria-label="إغلاق الصنف المميز">
+        <X />
+      </button>
+      <div className="featured-copy">
+        <span className="featured-kicker"><Sparkles size={18} /> اختيار الدار</span>
+        <p className="featured-eyebrow">الصنف المميز اليوم</p>
+        <h2 id="featured-today-title">{item.name}</h2>
+        {item.description && <p className="featured-description">{item.description}</p>}
+        <div className="featured-price">
+          {item.variants.length > 0 && <small>ابتداءً من</small>}
+          <strong>{price} {currency}</strong>
+        </div>
+        <button className="featured-action" onClick={details}>شوف التفاصيل</button>
+      </div>
+      <div className={`featured-visual ${item.imageUrl ? "" : "featured-visual-empty"}`}>
+        {item.imageUrl ? <img src={item.imageUrl} alt={item.imageAlt || item.name} /> : <UtensilsCrossed size={88} />}
+        <span aria-hidden="true">مميز اليوم</span>
+      </div>
+      <div className="featured-progress" aria-hidden="true"><i /></div>
+    </aside>
   );
 }
 function DishModal({

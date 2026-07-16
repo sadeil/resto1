@@ -170,7 +170,7 @@ model Allergen {
 
 model RestaurantSettings {
   id            Int              @id @default(1)
-  name          String           @default("كانو بيت")
+  name          String           @default("كأنه بيت")
   nameEn        String           @default("k2nobeit")
   description   String           @default("أكل بيتي فلسطيني، معمول بمحبة")
   currency      String           @default("₪")
