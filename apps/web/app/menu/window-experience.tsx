@@ -374,9 +374,11 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           <div className="shutter-motion shutter-motion-left" />
           {tray && (
             <div className="tray-stage">
-              <div className="steam" aria-hidden="true">
-                <i /><i /><i /><i /><i />
-              </div>
+              {!isShownColdDrinks && (
+                <div className="steam" aria-hidden="true">
+                  <i /><i /><i /><i /><i />
+                </div>
+              )}
               {isShownColdDrinks && (
                 <div className="ice-cubes" aria-hidden="true">
                   <i /><i /><i /><i /><i />
