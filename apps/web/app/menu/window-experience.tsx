@@ -56,7 +56,7 @@ type Category = {
   description: string | null;
   items: Item[];
 };
-type MenuData = {
+export type MenuData = {
   settings: {
     name: string;
     nameEn: string;
@@ -69,15 +69,15 @@ type MenuData = {
   categories: Category[];
 };
 const trays: Record<string, string> = {
-  الفطور: "/images/window-menu/breakfast-cartoon.png",
-  الساندويشات: "/images/window-menu/sandwiches-cartoon.png",
-  البرجرات: "/images/window-menu/burgers-cartoon.png",
-  الوجبات: "/images/window-menu/meals-cartoon.png",
-  "المشروبات الساخنة": "/images/window-menu/winter-drinks-cartoon.png",
-  "المشروبات الباردة": "/images/window-menu/cold-drinks-cartoon.png",
-  الأراجيل: "/images/window-menu/argeeleh-cartoon.png",
-  السلطات: "/images/window-menu/salads-cartoon.png",
-  المقبلات: "/images/window-menu/appetizers-cartoon.png",
+  الفطور: "/images/window-menu/breakfast-cartoon.webp",
+  الساندويشات: "/images/window-menu/sandwiches-cartoon.webp",
+  البرجرات: "/images/window-menu/burgers-cartoon.webp",
+  الوجبات: "/images/window-menu/meals-cartoon.webp",
+  "المشروبات الساخنة": "/images/window-menu/winter-drinks-cartoon.webp",
+  "المشروبات الباردة": "/images/window-menu/cold-drinks-cartoon.webp",
+  الأراجيل: "/images/window-menu/argeeleh-cartoon.webp",
+  السلطات: "/images/window-menu/salads-cartoon.webp",
+  المقبلات: "/images/window-menu/appetizers-cartoon.webp",
 };
 const clean = (name: string) => name.replace(/[^\u0600-\u06FF\s]/g, "").trim();
 function woodSound() {
@@ -222,7 +222,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     event.currentTarget.style.setProperty("--light-y", "55%");
   }
   if (!data)
-    return <State loading={query.isFetching} retry={() => query.refetch()} />;
+    return <><DoorEntrance /><State loading={query.isFetching} retry={() => query.refetch()} /></>;
   const tray = trays[clean(shown?.name || "")];
   const renderItemCard = (item: Item) => (
     <button
@@ -290,7 +290,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           <div className="brand-lockup">
             <img
               className="brand-logo"
-              src="/images/brand/kano-beit-logo.png"
+              src="/images/brand/kano-beit-logo.webp"
               alt={data.settings.name}
             />
             <div className="brand-caption">
@@ -354,7 +354,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           </aside>
           <img
             className="kitchen-window-base"
-            src="/images/window-menu/window-cartoon-transparent-v3.png"
+            src="/images/window-menu/window-cartoon-transparent-v3.webp"
             alt="شباك مطبخ بيت فلسطيني تقليدي"
           />
           <div className="kitchen-interior-dim" aria-hidden="true" />
@@ -394,7 +394,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
         </a>
         <section className="selected-menu" id="selected-menu">
           <div className="chair-sticker" aria-hidden="true">
-            <img src="/images/decor/patterned-chair-sticker.png" alt="" />
+            <img src="/images/decor/patterned-chair-sticker.webp" alt="" />
           </div>
           <span className="menu-editorial-mark" aria-hidden="true">MENU · منيو الدار</span>
           <div className="selected-menu-heading">
@@ -499,7 +499,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
         <footer className="restaurant-footer">
           <div className="footer-main">
             <div className="footer-brand">
-              <img src="/images/brand/kano-beit-logo.png" alt={data.settings.name} />
+              <img src="/images/brand/kano-beit-logo.webp" alt={data.settings.name} />
               <div>
                 <strong>{data.settings.name}</strong>
                 <small dir="ltr">{data.settings.nameEn}</small>

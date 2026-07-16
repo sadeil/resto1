@@ -467,9 +467,9 @@ html{scroll-padding-top:72px}.window-menu{padding-bottom:env(safe-area-inset-bot
   filter:saturate(.88) brightness(.94) drop-shadow(0 26px 24px rgba(53,28,15,.24))!important;
 }
 .chair-sticker{
-  top:23rem!important;
-  left:1.5rem!important;
-  width:clamp(100px,14%,145px)!important;
+  top:-3.25rem!important;
+  left:1.75rem!important;
+  width:clamp(68px,8%,92px)!important;
 }
 [data-theme="night"] .kitchen-window-base{
   filter:brightness(.62) saturate(.78) drop-shadow(0 28px 25px #0008)!important;
@@ -479,11 +479,11 @@ html{scroll-padding-top:72px}.window-menu{padding-bottom:env(safe-area-inset-bot
     filter:saturate(.88) brightness(.94) drop-shadow(0 15px 12px rgba(53,28,15,.22))!important;
   }
   .chair-sticker{
-    top:29rem!important;
-    left:2%!important;
-    width:19%!important;
-    min-width:76px!important;
-    max-width:108px!important;
+    top:-2.6rem!important;
+    left:4%!important;
+    width:13%!important;
+    min-width:52px!important;
+    max-width:70px!important;
   }
   [data-theme="night"] .kitchen-window-base{
     filter:brightness(.62) saturate(.78) drop-shadow(0 18px 14px #0007)!important;

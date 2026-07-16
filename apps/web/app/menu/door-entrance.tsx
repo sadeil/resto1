@@ -13,13 +13,13 @@ export function DoorEntrance() {
     setOpening(true);
     if (openTimer.current !== null) window.clearTimeout(openTimer.current);
     if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
-    hideTimer.current = window.setTimeout(() => setVisible(false), 1_850);
+    hideTimer.current = window.setTimeout(() => setVisible(false), 1_600);
   };
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    openTimer.current = window.setTimeout(() => setOpening(true), reducedMotion ? 500 : 1_050);
-    hideTimer.current = window.setTimeout(() => setVisible(false), reducedMotion ? 1_150 : 3_250);
+    openTimer.current = window.setTimeout(() => setOpening(true), reducedMotion ? 120 : 350);
+    hideTimer.current = window.setTimeout(() => setVisible(false), reducedMotion ? 650 : 1_850);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
