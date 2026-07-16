@@ -20,14 +20,6 @@ export function DoorEntrance({ ready = true }: { ready?: boolean }) {
     });
   };
 
-  const openDoor = () => {
-    if (opening || !ready) return;
-    setOpening(true);
-    if (openTimer.current !== null) window.clearTimeout(openTimer.current);
-    if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
-    hideTimer.current = window.setTimeout(finishEntrance, 1_600);
-  };
-
   useEffect(() => {
     if (!ready) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -65,7 +57,7 @@ export function DoorEntrance({ ready = true }: { ready?: boolean }) {
       <div className="coded-lantern" aria-hidden="true"><i /><b /></div>
       <div className="coded-plant coded-plant-right" aria-hidden="true"><i /><i /><i /><i /><i /><b /></div>
       <div className="coded-plant coded-plant-left" aria-hidden="true"><i /><i /><i /><i /><i /><b /></div>
-      <div className="coded-home-sign"><span>أهلًا وسهلًا في كأنه بيت</span></div>
+      <div className="coded-home-sign"><span>الدار أمان</span></div>
       <div className="coded-door-frame" aria-hidden="true">
         <div className="coded-doorway"><span>نورتوا البيت</span></div>
         <div className="coded-door coded-door-right">
@@ -79,9 +71,8 @@ export function DoorEntrance({ ready = true }: { ready?: boolean }) {
           <div className="coded-door-panel" /><div className="coded-door-rosette">✦</div>
         </div>
       </div>
-      <div className="coded-threshold" aria-hidden="true"><span>كأنه بيت</span></div>
+      <div className="coded-threshold" aria-hidden="true" />
       <p className="coded-tagline">أكل بيتي، بطعم البيت</p>
-      <button type="button" className="coded-skip" onClick={openDoor}>ادخل البيت</button>
     </div>
   );
 }
