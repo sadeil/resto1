@@ -60,7 +60,7 @@ export function DoorEntrance({ ready = true }: { ready?: boolean }) {
     >
       <div className="entrance-embroidery entrance-embroidery-right" aria-hidden="true" />
       <div className="entrance-embroidery entrance-embroidery-left" aria-hidden="true" />
-      <div className="coded-brand" aria-hidden="true"><span>⌂</span><b>كأنه بيت</b><small>KANO BEIT</small></div>
+      <div className="coded-brand" aria-hidden="true"><span>⌂</span><b>كأنه بيت</b><small>KA&apos;ANAH BEIT</small></div>
       <div className="coded-wood-note" aria-hidden="true">أكل بيتي<br />بطعم البيت<br /><span>♥</span></div>
       <div className="coded-lantern" aria-hidden="true"><i /><b /></div>
       <div className="coded-plant coded-plant-right" aria-hidden="true"><i /><i /><i /><i /><i /><b /></div>
