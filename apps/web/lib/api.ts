@@ -1,4 +1,7 @@
-export const API=process.env.NEXT_PUBLIC_API_URL||'http://127.0.0.1:4000/api';
+export const API = process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://k2nobeit-api.onrender.com/api"
+    : "http://127.0.0.1:4000/api");
 
 export async function api<T>(path:string,init?:RequestInit):Promise<T>{
   const method=(init?.method||'GET').toUpperCase();
