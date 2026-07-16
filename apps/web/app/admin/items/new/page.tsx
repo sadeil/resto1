@@ -1,0 +1,16 @@
+"use client";
+
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ArrowRight, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { api } from "@/lib/api";
+
+type Category={id:string;name:string;deletedAt:string|null}; type AddOn={id:string;name:string;price:string};
+export default function NewItem(){
+ const router=useRouter(); const categories=useQuery({queryKey:["cats"],queryFn:()=>api<Category[]>("/admin/categories")}); const addOns=useQuery({queryKey:["add-ons"],queryFn:()=>api<AddOn[]>("/admin/add-ons")});
+ const [form,setForm]=useState({categoryId:"",name:"",ingredients:"",price:"",sortOrder:0,addOnIds:[] as string[]});
+ const save=useMutation({mutationFn:()=>api<{id:string}>("/admin/items",{method:"POST",body:JSON.stringify({categoryId:form.categoryId,name:form.name,fullIngredients:form.ingredients.split("\n").map(x=>x.trim()).filter(Boolean),pricingType:"FIXED",price:Number(form.price),sortOrder:form.sortOrder,variants:[],addOnIds:form.addOnIds,active:true,featured:false,includesRegularFries:false})}),onSuccess:r=>{toast.success("تم إنشاء الصنف كمسودة");router.push(`/admin/items/${r.id}`)},onError:(e:Error)=>toast.error(e.message)});
+ return <main className="mx-auto min-h-screen max-w-3xl p-5 py-10"><a href="/admin" className="mb-6 inline-flex items-center gap-2 font-bold text-olive"><ArrowRight/>العودة للإدارة</a><form className="card space-y-6 p-6 md:p-9" onSubmit={e=>{e.preventDefault();save.mutate()}}><h1 className="text-3xl font-extrabold">إضافة صنف جديد</h1><label className="block font-bold">التصنيف<select required className="input mt-2" value={form.categoryId} onChange={e=>setForm({...form,categoryId:e.target.value})}><option value="">اختر التصنيف</option>{categories.data?.filter(c=>!c.deletedAt).map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label className="block font-bold">اسم الصنف<input required minLength={2} className="input mt-2" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label className="block font-bold">المكونات — مكوّن في كل سطر<textarea className="input mt-2" rows={6} value={form.ingredients} onChange={e=>setForm({...form,ingredients:e.target.value})}/></label><div className="grid gap-4 sm:grid-cols-2"><label className="font-bold">السعر<input required min="0" step="0.01" type="number" className="input mt-2" value={form.price} onChange={e=>setForm({...form,price:e.target.value})}/></label><label className="font-bold">الترتيب<input min="0" type="number" className="input mt-2" value={form.sortOrder} onChange={e=>setForm({...form,sortOrder:Number(e.target.value)})}/></label></div><fieldset><legend className="mb-2 font-bold">الإضافات المتاحة</legend><div className="grid gap-2 sm:grid-cols-2">{addOns.data?.map(a=><label key={a.id} className="rounded-xl border border-beige p-3"><input className="ml-2" type="checkbox" checked={form.addOnIds.includes(a.id)} onChange={e=>setForm({...form,addOnIds:e.target.checked?[...form.addOnIds,a.id]:form.addOnIds.filter(id=>id!==a.id)})}/>{a.name} · {a.price} ₪</label>)}</div></fieldset><button disabled={save.isPending} className="btn btn-primary w-full"><Save/>{save.isPending?"جاري الحفظ…":"إنشاء الصنف"}</button></form></main>;
+}

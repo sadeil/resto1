@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-html-link-for-pages */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ExternalLink, LogOut, Pencil, Plus, Send, Star, Trash2 } from "lucide-react";
@@ -6,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "@/lib/api";
+import AddOnManager from "./add-on-manager";
 
 type Category = { id: string; name: string; active: boolean; deletedAt: string | null; _count: { items: number } };
 type Item = { id: string; name: string; price: string | null; active: boolean; featured: boolean; deletedAt: string | null; category: { name: string }; variants: { price: string }[] };
@@ -72,7 +74,7 @@ export default function Admin() {
           ))}
         </section>
         <section className="card p-6">
-          <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold">الأصناف</h2><span className="text-sm text-brown">اختر صنفًا واحدًا كمميز اليوم، ثم انشر القائمة</span></div>
+          <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold">الأصناف</h2><a href="/admin/items/new" className="btn btn-primary"><Plus size={18}/>إضافة صنف</a></div>
           {items.isLoading ? <p className="py-8">جاري تحميل الأصناف…</p> : items.data?.items.length ? items.data.items.map((item) => (
             <article className="flex flex-wrap items-center justify-between gap-3 border-b border-beige py-4" key={item.id}>
               <div><h3 className="font-bold">{item.name}</h3><p className="text-sm text-brown">{item.category.name} · {item.price ?? item.variants[0]?.price} ₪</p></div>
@@ -87,6 +89,7 @@ export default function Admin() {
             </article>
           )) : <div className="py-14 text-center"><p className="font-bold">ما في أصناف بعد</p></div>}
         </section>
+        <AddOnManager />
       </div>
     </main>
   );

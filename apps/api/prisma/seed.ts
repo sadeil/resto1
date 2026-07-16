@@ -160,7 +160,8 @@ async function main(){
  }
  for(const[i,item]of breakfastSandwiches.entries()){
   const id=`breakfast-sandwich-${i+1}`;
-  await db.menuItem.upsert({where:{id},update:{categoryId:breakfastCategory.id,subcategoryId:breakfastSandwichSubcategory.id,name:item.name,description:null,fullIngredients:[...item.ingredients],price:item.price,pricingType:PricingType.FIXED,sortOrder:breakfastPlates.length+i,published:true,active:true,deletedAt:null,addOns:{set:breakfastExtras.map(x=>({id:x.id}))}},create:{id,categoryId:breakfastCategory.id,subcategoryId:breakfastSandwichSubcategory.id,name:item.name,fullIngredients:[...item.ingredients],price:item.price,pricingType:PricingType.FIXED,sortOrder:breakfastPlates.length+i,published:true,imageAlt:item.name,addOns:{connect:breakfastExtras.map(x=>({id:x.id}))}}});
+  const itemExtras=i===0?[]:breakfastExtras;
+  await db.menuItem.upsert({where:{id},update:{categoryId:breakfastCategory.id,subcategoryId:breakfastSandwichSubcategory.id,name:item.name,description:null,fullIngredients:[...item.ingredients],price:item.price,pricingType:PricingType.FIXED,sortOrder:breakfastPlates.length+i,published:true,active:true,deletedAt:null,addOns:{set:itemExtras.map(x=>({id:x.id}))}},create:{id,categoryId:breakfastCategory.id,subcategoryId:breakfastSandwichSubcategory.id,name:item.name,fullIngredients:[...item.ingredients],price:item.price,pricingType:PricingType.FIXED,sortOrder:breakfastPlates.length+i,published:true,imageAlt:item.name,addOns:{connect:itemExtras.map(x=>({id:x.id}))}}});
  }
  const appetizerCategory=await db.category.findUniqueOrThrow({where:{name:'🍟 المقبلات'}});
  for(const[i,item]of appetizers.entries()){
