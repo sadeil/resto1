@@ -133,6 +133,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
   const [q, setQ] = useState("");
   const [modal, setModal] = useState<Item | null>(null);
   const [promoPhase, setPromoPhase] = useState<"hidden" | "showing" | "leaving">("hidden");
+  const [promoDismissed, setPromoDismissed] = useState(false);
   const featuredItem = useMemo(
     () => data?.categories.flatMap((category) => category.items).find((item) => item.featured) || null,
     [data],
@@ -179,7 +180,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
     if (pointerFrame.current !== null) window.cancelAnimationFrame(pointerFrame.current);
   }, []);
   useEffect(() => {
-    if (!featuredItem) return;
+    if (!featuredItem || promoDismissed) return;
     const showTimer = window.setTimeout(() => setPromoPhase("showing"), 15_000);
     const leaveTimer = window.setTimeout(() => setPromoPhase("leaving"), 24_400);
     const hideTimer = window.setTimeout(() => setPromoPhase("hidden"), 25_000);
@@ -188,7 +189,7 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
       window.clearTimeout(leaveTimer);
       window.clearTimeout(hideTimer);
     };
-  }, [featuredItem]);
+  }, [featuredItem, promoDismissed]);
   function choose(id: string, sound = false) {
     if (id === selectedId || phase !== "ready" || transitionLocked.current) return;
     transitionLocked.current = true;
@@ -278,8 +279,12 @@ export function WindowMenu({ initial }: { initial: MenuData | null }) {
           item={featuredItem}
           currency={data.settings.currency}
           leaving={promoPhase === "leaving"}
-          close={() => setPromoPhase("hidden")}
+          close={() => {
+            setPromoDismissed(true);
+            setPromoPhase("hidden");
+          }}
           details={() => {
+            setPromoDismissed(true);
             setPromoPhase("hidden");
             setModal(featuredItem);
           }}
