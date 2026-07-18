@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     apple: "/images/brand/kano-beit-logo.png",
   },
 };
-const themeScript = `(()=>{try{const s=localStorage.getItem('k2nobeit-theme');const t=s==='day'||s==='night'?s:(matchMedia('(prefers-color-scheme: dark)').matches?'night':'day');document.documentElement.dataset.theme=t}catch{document.documentElement.dataset.theme='day'}})()`;
+const themeScript = `(()=>{try{const s=localStorage.getItem('k2nobeit-theme');document.documentElement.dataset.theme=s==='day'||s==='night'?s:'day'}catch{document.documentElement.dataset.theme='day'}})()`;
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>

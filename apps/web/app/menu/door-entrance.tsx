@@ -10,14 +10,6 @@ export function DoorEntrance({ ready = true }: { ready?: boolean }) {
 
   const finishEntrance = () => {
     setVisible(false);
-    window.requestAnimationFrame(() => {
-      document.getElementById("selected-menu")?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
-        block: "start",
-      });
-    });
   };
 
   useEffect(() => {
