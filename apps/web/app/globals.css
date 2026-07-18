@@ -521,3 +521,9 @@ html{scroll-padding-top:72px}.window-menu{padding-bottom:env(safe-area-inset-bot
   .footer-contact{padding-top:.15rem}
   .footer-bottom{width:calc(100% - 2.5rem)!important}
 }
+
+/* Slightly roomier category bar on phones. */
+@media(max-width:700px){
+  .window-categories{padding:.65rem .75rem!important}
+  .window-categories button{min-height:44px!important;padding:.58rem .9rem!important;font-size:.8rem!important}
+}
